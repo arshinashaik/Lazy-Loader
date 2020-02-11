@@ -1,0 +1,175 @@
+
+<html lang="en">
+    <head>
+        <style>
+        * {
+    box-sizing: border-box
+  }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Dosis', sans-serif;
+    line-height: 1.6;
+    color: #666;
+    background: #F6F6F6;
+  }
+  
+  #root {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    text-align: center;
+    padding: 1.5rem 2.5rem;
+    background-image: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
+    margin: 0 0 2rem 0;
+    font-size: 1.5rem;
+    color: white;
+  }
+  
+  img {
+    display: block;
+    margin: 1rem auto;
+    max-width: 100%;
+  }
+  
+  p {
+    padding: 0 2.5rem 2.5rem;
+    margin: 0;
+  }
+  
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .pic {
+    margin: 1rem;
+    background: white;
+    box-shadow: 2px 4px 25px rgba(0, 0, 0, .1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all .2s linear;
+  }
+  
+  .pic:hover {
+    box-shadow: 2px 8px 45px rgba(0, 0, 0, .15);
+    transform: translate3D(0, -2px, 0);
+  }
+  
+  @media screen and (min-width: 600px) {
+    .pic {
+      flex: 1 1 calc(50% - 2rem);
+    }
+  }
+  
+  @media screen and (min-width: 900px) {
+    .pic {
+      flex: 1 1 calc(33% - 2rem);
+    }
+  }
+  
+  .pic:nth-child(2n) h1 {
+    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+  }
+  
+  .pic:nth-child(4n) h1 {
+    background-image: linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%);
+  }
+  
+  .pic:nth-child(5n) h1 {
+    background-image: linear-gradient(120deg, #ffc3a0 0%, #ffafbd 100%);
+  }
+    </style>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+      <title>Picture App</title>
+  
+      <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
+      
+    </head>
+  
+    <body>
+      <div id="root">hello</div>
+  </body>
+      <script>
+          const app = document.getElementById('root');
+          const container = document.createElement('div');
+          container.setAttribute('class', 'container');
+          app.appendChild(container);
+  
+          var request = new XMLHttpRequest();
+  
+  request.open('GET', 'https://picsum.photos/v2/list?limit=40', true);
+  request.onload = function() {
+    // Begin accessing JSON data here
+    var data = JSON.parse(this.response);
+  
+    if (request.status >= 200 && request.status < 400) {
+      data.forEach(picture => {
+           const photo = document.createElement('div');
+        photo.setAttribute('class', 'pic');
+  
+        const h1 = document.createElement('h1');
+        const picsum = document.createElement('img');
+        picsum.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkyAAAAG4AakFoPtQAAAAASUVORK5CYII=";
+         picsum.dataset.src = picture.download_url;
+        // picsum.src = picture.download_url;
+        picsum.style.width = "367px";
+        picsum.style.height =  "267px";
+        h1.textContent = picture.author;
+        container.appendChild(photo);
+        photo.appendChild(h1);
+        photo.appendChild(picsum);
+        console.log(picture.author)
+        console.log(picture.download_url)
+      });
+    } else {
+      console.log('error')
+    }
+  }
+  
+  request.send();
+  
+   function isVisible(elem) {
+  
+        let coords = elem.getBoundingClientRect();
+  
+        let windowHeight = document.documentElement.clientHeight;
+  
+        // top elem edge is visible OR bottom elem edge is visible
+        let topVisible = coords.top > 0 && coords.top < windowHeight;
+        let bottomVisible = coords.bottom < windowHeight && coords.bottom > 0;
+  
+        return topVisible || bottomVisible;
+      }
+      function showVisible() {
+        for (let img of document.querySelectorAll('img')) {
+          let realSrc = img.dataset.src;
+          if (!realSrc) continue;
+  
+          if (isVisible(img)) {
+            // disable caching
+            // this line should be removed in production code
+            // realSrc += '?nocache=' + Math.random();
+  
+            img.src = realSrc;
+  
+            img.dataset.src = '';
+          }
+        }
+  
+      }
+  
+      window.addEventListener('scroll', showVisible);
+      showVisible();
+  
+      </script>
+  
+  </html>
+  
+  
+  
